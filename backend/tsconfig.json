@@ -11,6 +11,15 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@api/*": ["src/api/*"],
+      "@domain/*": ["src/domain/*"],
+      "@domain": ["src/domain"],
+      "@persistance/*": ["src/persistance/*"],
+      "@service/*": ["src/service/*"],
+      "@service": ["src/service"],
+      "@shared/*": ["src/shared/*"],
+    }
   }
 }
