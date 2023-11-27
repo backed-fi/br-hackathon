@@ -1,25 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+import { AdminPages } from "./pages/admin/AdminPages";
+import { AccountPages } from "./pages/account/AccountPages";
+
+import { AuthContextProvider } from "./context/AuthContext";
+import { ForbiddenPage } from "./pages/errors/ForbiddenPage";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <CssBaseline />
+
+      <Router>
+        <AuthContextProvider>
+          <Routes>
+            {AdminPages}
+            {AccountPages}
+
+            <Route
+              path="errors"
+            >
+              <Route
+                path="unauthorized"
+                element={<ForbiddenPage />}
+              />
+            </Route>
+          </Routes>
+        </AuthContextProvider>
+      </Router>
+    </React.Fragment>
   );
 }
 
