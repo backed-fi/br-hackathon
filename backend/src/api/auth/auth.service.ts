@@ -33,10 +33,6 @@ export class AuthService {
           return err(new GeneralError('User does not exist'));
         }
 
-        const salt = await bcrypt.genSalt();
-        const hash = await bcrypt.hash(pass, salt);
-        console.log(hash);
-
         if (!(await user.validatePassword(pass))) {
           return err(new GeneralError('Incorrect password'));
         }
