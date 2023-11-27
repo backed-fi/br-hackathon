@@ -5,7 +5,7 @@ import "@nomicfoundation/hardhat-toolbox";
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.19",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,
@@ -25,19 +25,15 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      // forking: { url: 'https://gateway.tenderly.co/public/polygon-mumbai' },
+      forking: { url: 'https://endpoints.omniatech.io/v1/eth/sepolia/public	'},
       allowUnlimitedContractSize: true
     },
     localhost: {
       url: 'http://localhost:8545'
     },
-    mumbai: {
-      url: 'https://gateway.tenderly.co/public/polygon-mumbai',
-      accounts: [process.env.MUMBAI_PK!]
-    },
     sepolia: {
-      url: `https://sepolia.infura.io/v3/${process.env.INFURA_KEY}`,
-      accounts: [process.env.MUMBAI_PK!]
+      url: 'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+      accounts: [process.env.SEPOLIA_PK!]
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
