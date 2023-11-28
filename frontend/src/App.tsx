@@ -6,6 +6,7 @@ import { AdminPages } from "./pages/admin/AdminPages";
 import { AccountPages } from "./pages/account/AccountPages";
 
 import { AuthContextProvider } from "./context/AuthContext";
+import { ApiContextProvider } from "./context/ApiContext";
 import { ForbiddenPage } from "./pages/errors/ForbiddenPage";
 
 function App() {
@@ -15,19 +16,16 @@ function App() {
 
       <Router>
         <AuthContextProvider>
-          <Routes>
-            {AdminPages}
-            {AccountPages}
+          <ApiContextProvider>
+            <Routes>
+              {AdminPages}
+              {AccountPages}
 
-            <Route
-              path="errors"
-            >
-              <Route
-                path="unauthorized"
-                element={<ForbiddenPage />}
-              />
-            </Route>
-          </Routes>
+              <Route path="errors">
+                <Route path="unauthorized" element={<ForbiddenPage />} />
+              </Route>
+            </Routes>
+          </ApiContextProvider>
         </AuthContextProvider>
       </Router>
     </React.Fragment>
