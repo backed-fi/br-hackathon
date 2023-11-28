@@ -32,13 +32,13 @@ jobs:
       - name: Push Docker image
         run: docker push $IMAGE_NAME:$GITHUB_RUN_ID
 
-      - name: set output
+      - name: Set output
         id: step_output
         run: |
           echo "docker_image=$IMAGE_NAME:$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
   apply:
     needs: build
-    name: Terraform provisioning
+    name: Terraform provision infrastructure
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,8 +53,11 @@ jobs:
         run: terraform init
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: terraform plan -var docker_image=${{ needs.build.outputs.docker_image }}
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Terraform Apply
+        run: terraform apply -var docker_image=${{ needs.build.outputs.docker_image }}
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
