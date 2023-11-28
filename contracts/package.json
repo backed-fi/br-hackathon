@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "5.0.0",
-    "@openzeppelin/contracts-upgradeable": "5.0.0"
+    "@openzeppelin/contracts-upgradeable": "5.0.0",
+    "@typechain/ethers-v5": "^11.1.2"
   }
 }

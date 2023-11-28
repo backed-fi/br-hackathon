@@ -1,7 +1,9 @@
 import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-chai-matchers";
+
 import 'dotenv/config';
+import '@typechain/hardhat';
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-chai-matchers";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -42,7 +44,17 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY
-  }
+  },
+  paths: {
+    sources: './contracts',
+    artifacts: `./artifacts`,
+    cache: `./cache`
+  },
+  typechain: {
+    outDir: `./../frontend/src/typechain`,
+    target: 'ethers-v5',
+    alwaysGenerateOverloads: true
+  },
 };
 
 export default config;
