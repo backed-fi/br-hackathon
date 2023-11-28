@@ -9,3 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_IMAGE_REPOSITORY_NAME}}
+
+    steps:
+    - name: Print image tag
+      run: echo $GITHUB_RUN_ID
+    - name: Login To GCP
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker --quiet
