@@ -26,7 +26,9 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 import "hardhat/console.sol";
 
@@ -67,8 +69,11 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
 
     // WhitelistController public whitelistController;
     address public stablecoin;
+    uint256 public stablecoinScaleFactor;
     mapping(address => TokenDetails) public availableTokens;
+    address[] public availableTokensList;
     mapping(address => OrderDetails[]) public orders;
+    mapping(address => mapping(address => uint256[])) public userTokenOrders;
     mapping(address => EpochDetails[]) public epochDetails;
 
     modifier isWhitelisted(address token) {
@@ -89,6 +94,7 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
         __Pausable_init();
         __Ownable_init(msg.sender);
         stablecoin = _stablecoin;
+        stablecoinScaleFactor = 10**(18 - IERC20Metadata(_stablecoin).decimals());
     }
 
     /**
@@ -127,6 +133,8 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
      * 
      */
     function registerToken(address token) external onlyOwner {
+        require(!availableTokens[token].enabled, "Token already added");
+        availableTokensList.push(token);
         availableTokens[token] = TokenDetails({
             enabled: true,
             idCounter: 0,
@@ -151,12 +159,12 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
      */
     function settleOrders(address token, uint256 price, uint256 epochId) external onlyOwner {
         EpochDetails storage epoch = epochDetails[token][epochId];
-        uint256 soldValue = epoch.amountSold * price / 1e18;
+        uint256 soldValue = epoch.amountSold * price / 1e18; // Adjust for stablecoinScaleFactor
         epoch.settled = true;
         epoch.executionPrice = price;
 
         if(soldValue > epoch.valueBought) {
-            IERC20(stablecoin).safeTransferFrom(msg.sender, address(this), soldValue - epoch.valueBought);
+            IERC20(stablecoin).safeTransferFrom(msg.sender, address(this), (soldValue - epoch.valueBought));
         } else {
             IERC20(token).safeTransferFrom(msg.sender, address(this), epoch.amountSold - epoch.valueBought * 1e18 / price);
         }
@@ -164,9 +172,9 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
         for(uint256 idx = 0; idx < epoch.ordersIds.length; idx++) {
             OrderDetails storage order = orders[token][epoch.ordersIds[idx]];
             if(order.isBuyOrder) {
-                IERC20(token).safeTransfer(order.recipient, order.amount * 1e18 / price);
+                IERC20(token).safeTransfer(order.recipient, order.amount * stablecoinScaleFactor * 1e18 / price);
             } else {
-                IERC20(stablecoin).safeTransfer(order.recipient, order.amount * price / 1e18);
+                IERC20(stablecoin).safeTransfer(order.recipient, order.amount * price / 1e18 / stablecoinScaleFactor);
             }
         }
     }
@@ -183,5 +191,40 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
             fetchedOrders[idx] = order;
         }
         return fetchedOrders;
+    }
+
+    /**
+     * @dev View function for retrieving all orders for given epoch
+     * 
+     */
+    function userOrders(address user, address token) external view returns (OrderDetails[] memory) {
+        uint256 ordersLength = 0;
+        for(uint256 tokenIdx = 0; tokenIdx < availableTokensList.length; tokenIdx++) {
+            address tokenAddress = availableTokensList[tokenIdx];
+            ordersLength += userTokenOrders[user][tokenAddress].length;
+        }
+
+        OrderDetails[] memory fetchedOrders = new OrderDetails[](ordersLength);
+        for(uint256 tokenIdx = 0; tokenIdx < availableTokensList.length; tokenIdx++) {
+            address tokenAddress = availableTokensList[tokenIdx];
+            for(uint256 idx = 0; idx < userTokenOrders[user][tokenAddress].length; idx++) {
+                OrderDetails storage order = orders[token][userTokenOrders[user][tokenAddress][idx]];
+                fetchedOrders[idx] = order;
+            }
+        }
+        return fetchedOrders;
+    }
+
+    /**
+     * @dev View function for retrieving all available tokens
+     * 
+     */
+    function allAvailableTokens() external view returns (TokenDetails[] memory) {
+        TokenDetails[] memory tokens = new TokenDetails[](availableTokensList.length);
+        for(uint256 idx = 0; idx < availableTokensList.length; idx++) {
+            TokenDetails storage details = availableTokens[availableTokensList[idx]];
+            tokens[idx] = details;
+        }
+        return tokens;
     }
 }

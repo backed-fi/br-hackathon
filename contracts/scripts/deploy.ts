@@ -23,17 +23,26 @@ async function main() {
 
   accounts = await ethers.getSigners();
   const stablecoin = ERC20__factory.connect('0xb1E34471421DEACda61e68897ED6DBE373169eE9', owner.signer);
+  const tBillTokens = [
+    '0xD73464667d5F2e15dd0A3C58C3610c39c1b1c2d4',
+    '0x0d9D5372b5F889bCEcb930b1540f7D1595075177',
+    '0x9019337Ecc929a777B9f87c91D28713496Fc6381'
+  ]
   // Deploy system
 
   // Deploy orders exchange
-    const implementation = await (await new OrdersExchange__factory(owner.signer).deploy()).waitForDeployment()
-    const proxyAdmin = await (await new ProxyAdmin__factory(owner.signer).deploy()).waitForDeployment()
-    const proxy = await (await new TransparentUpgradeableProxy__factory(owner.signer).deploy(
-      implementation.getAddress(),
-      proxyAdmin.getAddress(),
-      implementation.interface.encodeFunctionData("initialize", [await stablecoin.getAddress()])
-    )).waitForDeployment()
-    const exchange = OrdersExchange__factory.connect(await proxy.getAddress(), owner.signer);
+  const implementation = await (await new OrdersExchange__factory(owner.signer).deploy()).waitForDeployment()
+  const proxyAdmin = await (await new ProxyAdmin__factory(owner.signer).deploy()).waitForDeployment()
+  const proxy = await (await new TransparentUpgradeableProxy__factory(owner.signer).deploy(
+    implementation.getAddress(),
+    proxyAdmin.getAddress(),
+    implementation.interface.encodeFunctionData("initialize", [await stablecoin.getAddress()])
+  )).waitForDeployment()
+  const exchange = OrdersExchange__factory.connect(await proxy.getAddress(), owner.signer);
+
+  for(const tBill of tBillTokens) {
+    await exchange.registerToken(tBill)
+  }
 
   const state = {
     exchange: await exchange.getAddress(),

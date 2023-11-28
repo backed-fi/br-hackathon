@@ -50,11 +50,11 @@ const config: HardhatUserConfig = {
     artifacts: `./artifacts`,
     cache: `./cache`
   },
-  typechain: {
+  ...(process.env.FRONTEND_BUILD && {typechain: {
     outDir: `./../frontend/src/typechain`,
     target: 'ethers-v5',
     alwaysGenerateOverloads: true
-  },
+  }}),
 };
 
 export default config;
