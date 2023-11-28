@@ -27,3 +27,15 @@ resource "google_project_service" "cloudrun" {
   service            = "run.googleapis.com"
   disable_on_destroy = false
 }
+
+resource "google_project_service" "vpcaccess" {
+  provider = google
+  project = var.project_id
+  service = "vpcaccess.googleapis.com"
+}
+
+resource "google_project_service" "sqladmin" {
+  provider = google
+  project = var.project_id
+  service = "sqladmin.googleapis.com"
+}

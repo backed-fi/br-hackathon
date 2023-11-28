@@ -5,7 +5,6 @@ resource "google_sql_database_instance" "cloud_sql" {
   region           = var.region
   deletion_protection = true
   
-  depends_on  = [google_service_networking_connection.private_vpc_connection]
   settings {
     tier = "db-f1-micro"
     user_labels = {
@@ -14,7 +13,8 @@ resource "google_sql_database_instance" "cloud_sql" {
       type = "postgres"
     }
     ip_configuration {
-      ipv4_enabled    = false
+      ipv4_enabled    = true
+      require_ssl = false
       private_network = google_compute_network.private_network.self_link
     }
   }

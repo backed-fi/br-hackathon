@@ -46,7 +46,8 @@ resource "google_cloud_run_service" "backend" {
       annotations = {
         "autoscaling.knative.dev/maxScale"      = "3"
         "run.googleapis.com/cloudsql-instances" = "${var.project_id}:${var.region}:${google_sql_database_instance.cloud_sql.name}"
-        "run.googleapis.com/client-name"        = "terraform"
+        "run.googleapis.com/client-name"        = "terraform",
+        "run.googleapis.com/vpc-access-connector" = "${google_vpc_access_connector.connector.self_link}"
       }
     }
   }
@@ -58,3 +59,20 @@ resource "random_string" "jwt_secret" {
   length           = 32
   override_special = "%*()-_=+[]{}?"
 }
+
+data "google_iam_policy" "noauth" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
+}
+
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location    = google_cloud_run_service.backend.location
+  project     = google_cloud_run_service.backend.project
+  service     = google_cloud_run_service.backend.name
+  policy_data = data.google_iam_policy.noauth.policy_data
+}
+
