@@ -41,7 +41,7 @@ async function main() {
   const exchange = OrdersExchange__factory.connect(await proxy.getAddress(), owner.signer);
 
   for(const tBill of tBillTokens) {
-    await exchange.registerToken(tBill)
+    await (await exchange.registerToken(tBill)).wait()
   }
 
   const state = {

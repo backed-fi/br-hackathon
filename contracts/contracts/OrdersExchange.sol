@@ -150,6 +150,7 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
     function closeEpoch(address token, uint256 epochId) external onlyOwner {
         uint256 closedEpoch = availableTokens[token].currentEpoch++;
         require(epochId == closedEpoch, "Wrong epoch closed");
+        require(closedEpoch == 0 || epochDetails[token][closedEpoch-1].settled, "Previous epoch not settled yet");
     }
 
     /**
