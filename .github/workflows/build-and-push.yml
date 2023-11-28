@@ -1,0 +1,11 @@
+name: "Docker build nad push to GCR"
+
+on:
+  push:
+    branches: ["main"]
+jobs:
+  build:
+    name: Setup Google Cloud Account and Push image to the GCR
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_IMAGE_REPOSITORY_NAME}}
