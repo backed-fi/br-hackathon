@@ -18,3 +18,8 @@ variable "repository" {
   type        = string
   default     = "docker-repository"
 }
+
+variable "docker_image" {
+  description = "API docker image"
+  type = string
+}
