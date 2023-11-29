@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
 import { OrdersPage } from "./pages/OrdersPage";
-import { SettlementsPage } from "./pages/SettlementsPage";
 
 export const AdminPages = (
   <Route
@@ -11,9 +10,5 @@ export const AdminPages = (
       element={<OrdersPage />}
     />
 
-    <Route
-      path="settlements"
-      element={<SettlementsPage />}
-    />
   </Route>
 );

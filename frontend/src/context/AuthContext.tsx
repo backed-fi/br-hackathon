@@ -13,7 +13,11 @@ type AuthContextAuthenticated = {
   isAdmin: boolean;
 }
 
-type AuthContext = AuthContextAuthenticated | AuthContextNotAuthenticated;
+type AuthFns = {
+  authenticate: () => void;
+}
+
+type AuthContext = (AuthContextAuthenticated | AuthContextNotAuthenticated);
 
 // endregion
 
@@ -21,14 +25,26 @@ const defaultContext: AuthContext = {
   isAuthenticated: false
 };
 
-const AuthContext = React.createContext<AuthContext>(defaultContext as any);
+const AuthContext = React.createContext<AuthContext & AuthFns>(defaultContext as any);
 
 export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({ children }) => {
   const [authContext, setAuthContext] = React.useState<AuthContext>(defaultContext);
 
+
   return (
     <AuthContext.Provider
-      value={authContext}
+      value={{
+        ...authContext,
+
+        authenticate: () => {
+          setAuthContext((pr) => ({
+            ...pr,
+            isAdmin: true,
+            userId: "demo-user",
+            isAuthenticated: true
+          }));
+        }
+      }}
       children={children}
     />
   );

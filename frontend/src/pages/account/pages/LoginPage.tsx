@@ -1,9 +1,18 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export const LoginPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const authContext = useAuthContext();
+
+  const onAuthenticate = () => {
+    authContext.authenticate();
+
+    navigate("/admin/orders");
+  };
 
   return (
     <Box
@@ -30,7 +39,7 @@ export const LoginPage: React.FC = () => {
         type="password"
       />
 
-      <Button>
+      <Button onClick={onAuthenticate}>
         Login
       </Button>
     </Box>
