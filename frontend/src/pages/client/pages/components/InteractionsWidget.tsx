@@ -87,7 +87,7 @@ export const InteractionsWidget: React.FC = () => {
   };
 
   return (
-    <Card sx={{ width: 400 }}>
+    <Card sx={{ width: 350 }}>
       <CardContent>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
