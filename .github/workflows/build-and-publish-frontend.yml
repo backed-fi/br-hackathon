@@ -1,0 +1,27 @@
+name: "Build nad push to Firebase"
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - frontend/**
+
+jobs:
+  build:
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./frontend
+    steps:
+      - name: node:16
+        entrypoint: bash
+        args:
+          - "-c"
+          - |
+            npm install -g firebase-tools
+
+
+            cd frontend && npm ci && NODE_ENV=production npm run build
+            cd ..
+
+            firebase use br-hackathon-406413 && firebase deploy --only hosting:br-hackathon-dapp
