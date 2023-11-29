@@ -7,13 +7,13 @@ import { ok } from '@shared/typings/result';
 @Public()
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('login')
   async login(
     @Body('username') username: string,
     @Body('password') password: string,
-  ): Promise<any> {
+  ): Promise<{ accessToken: string }> {
     return unwrapToResponseAsync(
       this.authService
         .validateUser(username, password)

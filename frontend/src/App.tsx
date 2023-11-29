@@ -1,4 +1,5 @@
 import React from "react";
+import { SnackbarProvider } from "notistack";
 import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -8,6 +9,7 @@ import { AccountPages } from "./pages/account/AccountPages";
 import { AuthContextProvider } from "./context/AuthContext";
 import { ApiContextProvider } from "./context/ApiContext";
 import { ForbiddenPage } from "./pages/errors/ForbiddenPage";
+import { ClientPages } from "./pages/client/ClientPages";
 
 function App() {
   return (
@@ -15,18 +17,27 @@ function App() {
       <CssBaseline />
 
       <Router>
-        <AuthContextProvider>
-          <ApiContextProvider>
-            <Routes>
-              {AdminPages}
-              {AccountPages}
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+        >
+          <AuthContextProvider>
+            <ApiContextProvider>
+              <Routes>
+                {AdminPages}
+                {ClientPages}
+                {AccountPages}
 
-              <Route path="errors">
-                <Route path="unauthorized" element={<ForbiddenPage />} />
-              </Route>
-            </Routes>
-          </ApiContextProvider>
-        </AuthContextProvider>
+                <Route path="errors">
+                  <Route path="unauthorized" element={<ForbiddenPage />} />
+                </Route>
+              </Routes>
+            </ApiContextProvider>
+          </AuthContextProvider>
+        </SnackbarProvider>
       </Router>
     </React.Fragment>
   );

@@ -1,17 +1,47 @@
 import React from "react";
-import { Location, useLocation, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { useSnackbar } from "notistack";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { useApiContext } from "../../../context/ApiContext";
 import { useAuthContext } from "../../../context/AuthContext";
 
+const Schema = z.object({
+  login: z.string().nonempty("The comment is required!"),
+  password: z.string().nonempty("The comment is required!"),
+});
+
+type SchemaType = z.infer<typeof Schema>;
+
 export const LoginPage: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const authContext = useAuthContext();
+  const { client } = useApiContext();
+  const { authenticate } = useAuthContext();
+  const snackbar = useSnackbar();
 
-  const onAuthenticate = () => {
-    authContext.authenticate();
+  const form = useForm<SchemaType>({
+    resolver: zodResolver(Schema),
+  });
 
-    navigate("/admin/orders");
+  const onLogin = async (data: SchemaType) => {
+    try {
+      const { data: response } = await client.post("/public/auth/login", {
+        username: data.login,
+        password: data.password,
+      });
+
+      const { accessToken, userId, isAdmin } = response;
+
+      authenticate(accessToken, userId, isAdmin);
+
+      snackbar.enqueueSnackbar("Login success", {
+        variant: "success",
+      });
+    } catch (e) {
+      snackbar.enqueueSnackbar("Login failed", {
+        variant: "error",
+      });
+    }
   };
 
   return (
@@ -23,25 +53,16 @@ export const LoginPage: React.FC = () => {
         width: "90vw",
         gap: "1rem",
         display: "flex",
-        flexFlow: "column"
+        flexFlow: "column",
       }}
     >
-      <Typography variant="subtitle1">
-        Login
-      </Typography>
+      <Typography variant="subtitle1">Login</Typography>
 
-      <TextField
-        label="Email"
-      />
+      <TextField {...form.register("login")} />
 
-      <TextField
-        label="Password"
-        type="password"
-      />
+      <TextField {...form.register("password")} />
 
-      <Button onClick={onAuthenticate}>
-        Login
-      </Button>
+      <Button onClick={form.handleSubmit(onLogin)}>Login</Button>
     </Box>
   );
 };
