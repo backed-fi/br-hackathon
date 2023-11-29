@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
       url: 'http://localhost:8545'
     },
     sepolia: {
-      url: 'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+      url: 'https://ethereum-sepolia.publicnode.com',
       accounts: [process.env.SEPOLIA_PK!]
     },
     mainnet: {

@@ -105,14 +105,19 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
      */
     function scheduleOrder(address token, uint256 amount, bool buyOrder) public isWhitelisted(token) returns (uint256) {
         uint256 orderId = availableTokens[token].idCounter++;
-        orders[token][orderId] = OrderDetails({
+        orders[token].push(OrderDetails({
             token: token,
             amount: amount,
             isBuyOrder: buyOrder,
             recipient: msg.sender
-        });
-        epochDetails[token][availableTokens[token].currentEpoch].ordersIds.push(orderId);
-
+        }));
+        uint256 currentEpoch = availableTokens[token].currentEpoch;
+        epochDetails[token][currentEpoch].ordersIds.push(orderId);
+        if(buyOrder) {
+          epochDetails[token][currentEpoch].valueBought += amount;  
+        } else {
+          epochDetails[token][currentEpoch].amountSold += amount;  
+        }
         address tokenToPull = buyOrder ? stablecoin : token;
         IERC20(tokenToPull).safeTransferFrom(msg.sender, address(this), amount);
         return orderId;
@@ -140,6 +145,14 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
             idCounter: 0,
             currentEpoch: 0
         });
+        epochDetails[token].push(EpochDetails({
+            token: token,
+            valueBought: 0,
+            amountSold: 0,
+            settled: false,
+            executionPrice: 0,
+            ordersIds: new uint256[](0)
+        }));
     }
 
     /**
@@ -165,9 +178,12 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
         epoch.executionPrice = price;
 
         if(soldValue > epoch.valueBought) {
+            console.log("v1");
+            console.log((soldValue - epoch.valueBought));
             IERC20(stablecoin).safeTransferFrom(msg.sender, address(this), (soldValue - epoch.valueBought));
         } else {
-            IERC20(token).safeTransferFrom(msg.sender, address(this), epoch.amountSold - epoch.valueBought * 1e18 / price);
+            console.log(epoch.valueBought * 1e18 / price - epoch.amountSold);
+            IERC20(token).safeTransferFrom(msg.sender, address(this), epoch.valueBought * 1e18 / price - epoch.amountSold);
         }
 
         for(uint256 idx = 0; idx < epoch.ordersIds.length; idx++) {
