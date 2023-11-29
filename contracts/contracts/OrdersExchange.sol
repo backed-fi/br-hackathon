@@ -114,7 +114,7 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
         uint256 currentEpoch = availableTokens[token].currentEpoch;
         epochDetails[token][currentEpoch].ordersIds.push(orderId);
         if(buyOrder) {
-          epochDetails[token][currentEpoch].valueBought += amount;  
+          epochDetails[token][currentEpoch].valueBought += amount * stablecoinScaleFactor;  
         } else {
           epochDetails[token][currentEpoch].amountSold += amount;  
         }
@@ -173,16 +173,13 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
      */
     function settleOrders(address token, uint256 price, uint256 epochId) external onlyOwner {
         EpochDetails storage epoch = epochDetails[token][epochId];
-        uint256 soldValue = epoch.amountSold * price / 1e18; // Adjust for stablecoinScaleFactor
+        uint256 soldValue = epoch.amountSold * price / 1e18;
         epoch.settled = true;
         epoch.executionPrice = price;
 
         if(soldValue > epoch.valueBought) {
-            console.log("v1");
-            console.log((soldValue - epoch.valueBought));
-            IERC20(stablecoin).safeTransferFrom(msg.sender, address(this), (soldValue - epoch.valueBought));
+            IERC20(stablecoin).safeTransferFrom(msg.sender, address(this), (soldValue - epoch.valueBought) / stablecoinScaleFactor);
         } else {
-            console.log(epoch.valueBought * 1e18 / price - epoch.amountSold);
             IERC20(token).safeTransferFrom(msg.sender, address(this), epoch.valueBought * 1e18 / price - epoch.amountSold);
         }
 

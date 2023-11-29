@@ -52,22 +52,19 @@ describe("OrdersExchange", function () {
   });
 
   describe('#exampleFlow', () => {
-    let amount: bigint;
-    let recipient: string;
-    cacheBeforeEach(async () => {
-      amount = 10n ** 18n
-      recipient = owner.address
-    })
-    const subject = async () => {
-      // return exchange.connect(actor.signer).transfer(recipient, amount)
-    };
-    it('should work if controller is set to zero address', async () => {
+    it('should work just fine', async () => {
       await exchange.registerToken(tBillToken);
-      await stablecoin.approve(exchange, 100n*10n**18n);
+      await stablecoin.approve(exchange, 100n*10n**6n);
+      await exchange.scheduleOrder(
+        tBillToken,
+        100n*10n**6n,
+        true
+      )
+      await tBillToken.approve(exchange, 100n*10n**18n);
       await exchange.scheduleOrder(
         tBillToken,
         100n*10n**18n,
-        true
+        false
       )
       const currentEpoch = (await exchange.availableTokens(tBillToken)).currentEpoch;
       await exchange.closeEpoch(tBillToken, currentEpoch);
