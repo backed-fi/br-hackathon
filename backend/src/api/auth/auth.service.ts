@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import * as bcrypt from 'bcrypt';
 import { GeneralError, Result, err, ok } from '@shared/typings/result';
 import { FindUserQuery } from '@service/user/queries/find-user/find-user.query';
-import User from '@domain/user/model/user';
+import User, { UserRole } from '@domain/user/model/user';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -16,12 +16,15 @@ export class AuthService {
   async login(user: User) {
     const payload = {
       userId: user.id,
+      isAdmin: user.role === UserRole.Admin,
       username: user.username,
     };
 
     const accessToken = await this.jwtService.sign(payload);
 
-    return { accessToken, userId: user.id };
+    return {
+      accessToken,
+    };
   }
 
   async validateUser(username: string, pass: string): Promise<Result<User>> {

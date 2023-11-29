@@ -9,6 +9,7 @@ import { AccountPages } from "./pages/account/AccountPages";
 import { AuthContextProvider } from "./context/AuthContext";
 import { ApiContextProvider } from "./context/ApiContext";
 import { ForbiddenPage } from "./pages/errors/ForbiddenPage";
+import { ClientPages } from "./pages/client/ClientPages";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <ApiContextProvider>
               <Routes>
                 {AdminPages}
+                {ClientPages}
                 {AccountPages}
 
                 <Route path="errors">

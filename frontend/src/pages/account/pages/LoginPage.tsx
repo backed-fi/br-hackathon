@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useApiContext } from "../../../context/ApiContext";
+import { useAuthContext } from "../../../context/AuthContext";
 
 const Schema = z.object({
   login: z.string().nonempty("The comment is required!"),
@@ -15,6 +16,7 @@ type SchemaType = z.infer<typeof Schema>;
 
 export const LoginPage: React.FC = () => {
   const { client } = useApiContext();
+  const { authenticate } = useAuthContext();
   const snackbar = useSnackbar();
 
   const form = useForm<SchemaType>({
@@ -23,10 +25,14 @@ export const LoginPage: React.FC = () => {
 
   const onLogin = async (data: SchemaType) => {
     try {
-      await client.post("/public/auth/login", {
+      const { data: response } = await client.post("/public/auth/login", {
         username: data.login,
         password: data.password,
       });
+
+      const { accessToken, userId, isAdmin } = response;
+
+      authenticate(accessToken, userId, isAdmin);
 
       snackbar.enqueueSnackbar("Login success", {
         variant: "success",
