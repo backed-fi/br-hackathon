@@ -98,7 +98,7 @@ export const InteractionsWidget: React.FC = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "column"
           }}
         >
           <Typography>Select asset:</Typography>
