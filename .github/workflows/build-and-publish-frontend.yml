@@ -23,6 +23,7 @@ jobs:
         run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
+          entryPoint: ./frontend
           firebaseServiceAccount: "${{ secrets.FIREBASE_CREDENTIALS }}"
           projectId: br-hackathon-406413
           channelId: live
