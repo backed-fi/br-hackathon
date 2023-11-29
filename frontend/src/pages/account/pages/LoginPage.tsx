@@ -25,7 +25,7 @@ export const LoginPage: React.FC = () => {
     try {
       await client.post("/public/auth/login", {
         username: data.login,
-        passowrd: data.password,
+        password: data.password,
       });
 
       snackbar.enqueueSnackbar("Login success", {
