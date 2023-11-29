@@ -75,8 +75,6 @@ export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({
 }) => {
   // region State
 
-  const x = decodeToken();
-
   const [authContextState, setAuthContextState] =
     React.useState<AuthContextPayloadType>(defaultContextData);
 
