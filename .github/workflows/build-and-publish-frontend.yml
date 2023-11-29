@@ -21,10 +21,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Login To GCP
-        uses: google-github-actions/setup-gcloud@v0
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-      - name: Deploy
-        run: firebase use br-hackathon-406413 && firebase deploy
+          firebaseServiceAccount: "${{ secrets.FIREBASE_CREDENTIALS }}"
+          projectId: br-hackathon-406413
+          channelId: live
