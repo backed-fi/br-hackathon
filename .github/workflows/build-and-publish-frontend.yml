@@ -3,8 +3,8 @@ name: "Build nad push to Firebase"
 on:
   push:
     branches: ["main"]
-    # paths:
-    #   - frontend/**
+    paths:
+      - frontend/**
 
 jobs:
   build:
@@ -21,6 +21,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          REACT_APP_API_URL: "${{ secrets.REACT_APP_API_URL }}"
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           entryPoint: ./frontend
