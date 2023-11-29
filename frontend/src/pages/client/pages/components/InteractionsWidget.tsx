@@ -90,11 +90,7 @@ export const InteractionsWidget: React.FC = () => {
     <Card sx={{ width: 350 }}>
       <CardContent>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
-          >
+          <Tabs value={value} onChange={handleChange}>
             <Tab label="Buy" sx={{ flexGrow: 1 }} />
             <Tab label="Sell" sx={{ flexGrow: 1 }} />
           </Tabs>
