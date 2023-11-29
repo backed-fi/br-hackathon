@@ -443,3 +443,9 @@ fabric.properties
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+
+infra/tmp
+
+
+# Firebase
+.firebase

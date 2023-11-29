@@ -26,8 +26,7 @@ const AuthContext = React.createContext<AuthContextType>(defaultContext as any);
 export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({
   children,
 }) => {
-  const [authContext, setAuthContext] =
-    React.useState<AuthContextType>(defaultContext);
+  const [authContext] = React.useState<AuthContextType>(defaultContext);
 
   return <AuthContext.Provider value={authContext} children={children} />;
 };

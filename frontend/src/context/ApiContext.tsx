@@ -22,8 +22,7 @@ const ApiContext = React.createContext<ApiContextType>(
 export const ApiContextProvider: React.FC<React.PropsWithChildren<any>> = ({
   children,
 }) => {
-  const [apiContext, setApiContext] =
-    React.useState<ApiContextType>(defaultApiContext);
+  const [apiContext] = React.useState<ApiContextType>(defaultApiContext);
 
   return <ApiContext.Provider value={apiContext} children={children} />;
 };
