@@ -3,9 +3,10 @@ resource "google_sql_database_instance" "cloud_sql" {
   provider    = google
   database_version = "POSTGRES_14"
   region           = var.region
-  deletion_protection = true
+  deletion_protection = false
   
-  depends_on  = [google_service_networking_connection.private_vpc_connection]
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+
   settings {
     tier = "db-f1-micro"
     user_labels = {
@@ -14,8 +15,10 @@ resource "google_sql_database_instance" "cloud_sql" {
       type = "postgres"
     }
     ip_configuration {
-      ipv4_enabled    = false
+      ipv4_enabled    = true
+      require_ssl = false
       private_network = google_compute_network.private_network.self_link
+      # allocated_ip_range = google_compute_global_address.cloudsql_reserved_ip_range.name
     }
   }
 }
@@ -29,6 +32,8 @@ resource "google_sql_user" "root" {
   name     = "root"
   instance = google_sql_database_instance.cloud_sql.name
   password = random_string.root_password.result
+
+  depends_on = [ google_sql_database_instance.cloud_sql ]
 }
 
 # Creates secret for storing DATABASE_PASSWORD
