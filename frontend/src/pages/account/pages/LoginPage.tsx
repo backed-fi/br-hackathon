@@ -1,7 +1,43 @@
 import React from "react";
+import { z } from "zod";
+import { useSnackbar } from "notistack";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { useApiContext } from "../../../context/ApiContext";
+
+const Schema = z.object({
+  login: z.string().nonempty("The comment is required!"),
+  password: z.string().nonempty("The comment is required!"),
+});
+
+type Schema = z.infer<typeof Schema>;
 
 export const LoginPage: React.FC = () => {
+  const { client } = useApiContext();
+  const snackbar = useSnackbar();
+
+  const form = useForm<Schema>({
+    resolver: zodResolver(Schema),
+  });
+
+  const onLogin = async (data: Schema) => {
+    try {
+      const response = await client.post("/public/auth/login", {
+        username: data.login,
+        passowrd: data.password,
+      });
+
+      snackbar.enqueueSnackbar("Login success", {
+        variant: "success",
+      });
+    } catch (e) {
+      snackbar.enqueueSnackbar("Login failed", {
+        variant: "error",
+      });
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -16,11 +52,11 @@ export const LoginPage: React.FC = () => {
     >
       <Typography variant="subtitle1">Login</Typography>
 
-      <TextField label="Email" />
+      <TextField {...form.register("login")} />
 
-      <TextField label="Password" type="password" />
+      <TextField {...form.register("password")} />
 
-      <Button>Login</Button>
+      <Button onClick={form.handleSubmit(onLogin)}>Login</Button>
     </Box>
   );
 };

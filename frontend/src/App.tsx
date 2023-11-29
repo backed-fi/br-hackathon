@@ -1,4 +1,5 @@
 import React from "react";
+import { SnackbarProvider } from "notistack";
 import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -15,18 +16,26 @@ function App() {
       <CssBaseline />
 
       <Router>
-        <AuthContextProvider>
-          <ApiContextProvider>
-            <Routes>
-              {AdminPages}
-              {AccountPages}
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+        >
+          <AuthContextProvider>
+            <ApiContextProvider>
+              <Routes>
+                {AdminPages}
+                {AccountPages}
 
-              <Route path="errors">
-                <Route path="unauthorized" element={<ForbiddenPage />} />
-              </Route>
-            </Routes>
-          </ApiContextProvider>
-        </AuthContextProvider>
+                <Route path="errors">
+                  <Route path="unauthorized" element={<ForbiddenPage />} />
+                </Route>
+              </Routes>
+            </ApiContextProvider>
+          </AuthContextProvider>
+        </SnackbarProvider>
       </Router>
     </React.Fragment>
   );

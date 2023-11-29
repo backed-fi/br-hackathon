@@ -43,6 +43,10 @@ resource "google_cloud_run_service" "backend" {
           name = "MIKRO_ORM_MIGRATIONS_DISABLE_FOREIGN_KEYS"
           value = false
         }
+        env {
+          name = "ALLOWED_ORIGINS"
+          value = "https://br-hackathon-406413.web.app;https://br-hackathon-406413.firebaseapp.com"
+        }
       }
     }
 
