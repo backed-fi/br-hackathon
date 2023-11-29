@@ -26,6 +26,10 @@ jobs:
         run: npm run build
         env:
           REACT_APP_API_URL: "${{ secrets.REACT_APP_API_URL }}"
+          REACT_APP_TOKEN_LFT_ADDRESS: "0xD73464667d5F2e15dd0A3C58C3610c39c1b1c2d4"
+          REACT_APP_TOKEN_LFN_ADDRESS: "0x0d9D5372b5F889bCEcb930b1540f7D1595075177"
+          REACT_APP_TOKEN_NTN_ADDRESS: "0x9019337Ecc929a777B9f87c91D28713496Fc6381"
+          REACT_APP_SWAP_CONTRACT_ADDRESS: "0x0C47bb35e40AE5C7e22bCf9088641b610D9aD4C6"
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           entryPoint: ./frontend
