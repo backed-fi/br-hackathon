@@ -31,7 +31,8 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true
     },
     localhost: {
-      url: 'http://localhost:8545'
+      url: 'http://localhost:8545',
+      accounts: [process.env.SEPOLIA_PK!]
     },
     sepolia: {
       url: 'https://ethereum-sepolia.publicnode.com',
