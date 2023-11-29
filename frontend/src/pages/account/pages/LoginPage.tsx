@@ -11,19 +11,19 @@ const Schema = z.object({
   password: z.string().nonempty("The comment is required!"),
 });
 
-type Schema = z.infer<typeof Schema>;
+type SchemaType = z.infer<typeof Schema>;
 
 export const LoginPage: React.FC = () => {
   const { client } = useApiContext();
   const snackbar = useSnackbar();
 
-  const form = useForm<Schema>({
+  const form = useForm<SchemaType>({
     resolver: zodResolver(Schema),
   });
 
-  const onLogin = async (data: Schema) => {
+  const onLogin = async (data: SchemaType) => {
     try {
-      const response = await client.post("/public/auth/login", {
+      await client.post("/public/auth/login", {
         username: data.login,
         passowrd: data.password,
       });
