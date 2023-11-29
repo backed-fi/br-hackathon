@@ -3,35 +3,33 @@ import React from "react";
 // region Types
 
 type AuthContextNotAuthenticated = {
-  isAuthenticated: false
-}
+  isAuthenticated: false;
+};
 
 type AuthContextAuthenticated = {
   isAuthenticated: true;
 
   userId: string;
   isAdmin: boolean;
-}
+};
 
-type AuthContext = AuthContextAuthenticated | AuthContextNotAuthenticated;
+type AuthContextType = AuthContextAuthenticated | AuthContextNotAuthenticated;
 
 // endregion
 
-const defaultContext: AuthContext = {
-  isAuthenticated: false
+const defaultContext: AuthContextType = {
+  isAuthenticated: false,
 };
 
-const AuthContext = React.createContext<AuthContext>(defaultContext as any);
+const AuthContext = React.createContext<AuthContextType>(defaultContext as any);
 
-export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({ children }) => {
-  const [authContext, setAuthContext] = React.useState<AuthContext>(defaultContext);
+export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({
+  children,
+}) => {
+  const [authContext, setAuthContext] =
+    React.useState<AuthContextType>(defaultContext);
 
-  return (
-    <AuthContext.Provider
-      value={authContext}
-      children={children}
-    />
-  );
+  return <AuthContext.Provider value={authContext} children={children} />;
 };
 
 export const useAuthContext = () => React.useContext(AuthContext);

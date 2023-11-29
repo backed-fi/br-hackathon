@@ -3,25 +3,27 @@ import axios, { AxiosInstance } from "axios";
 
 // region Types
 
-type ApiContext = {
+type ApiContextType = {
   client: AxiosInstance;
 };
 
 // endregion
 
-const defaultApiContext: ApiContext = {
+const defaultApiContext: ApiContextType = {
   client: axios.create({
     baseURL: process.env.REACT_APP_API_URL,
   }),
 };
 
-const ApiContext = React.createContext<ApiContext>(defaultApiContext as any);
+const ApiContext = React.createContext<ApiContextType>(
+  defaultApiContext as any
+);
 
 export const ApiContextProvider: React.FC<React.PropsWithChildren<any>> = ({
   children,
 }) => {
   const [apiContext, setApiContext] =
-    React.useState<ApiContext>(defaultApiContext);
+    React.useState<ApiContextType>(defaultApiContext);
 
   return <ApiContext.Provider value={apiContext} children={children} />;
 };

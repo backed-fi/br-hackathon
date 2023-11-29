@@ -1,10 +1,7 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
 export const LoginPage: React.FC = () => {
-  const location = useLocation();
-
   return (
     <Box
       sx={{
@@ -14,25 +11,16 @@ export const LoginPage: React.FC = () => {
         width: "90vw",
         gap: "1rem",
         display: "flex",
-        flexFlow: "column"
+        flexFlow: "column",
       }}
     >
-      <Typography variant="subtitle1">
-        Login
-      </Typography>
+      <Typography variant="subtitle1">Login</Typography>
 
-      <TextField
-        label="Email"
-      />
+      <TextField label="Email" />
 
-      <TextField
-        label="Password"
-        type="password"
-      />
+      <TextField label="Password" type="password" />
 
-      <Button>
-        Login
-      </Button>
+      <Button>Login</Button>
     </Box>
   );
 };
