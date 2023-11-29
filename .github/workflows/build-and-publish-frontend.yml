@@ -3,11 +3,12 @@ name: "Build nad push to Firebase"
 on:
   push:
     branches: ["main"]
-    paths:
-      - frontend/**
+    # paths:
+    #   - frontend/**
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
