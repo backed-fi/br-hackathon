@@ -69,7 +69,7 @@ export const LoginPage: React.FC = () => {
 
       <TextField {...form.register("login")} />
 
-      <TextField {...form.register("password")} />
+      <TextField type="password" {...form.register("password")} />
 
       <Button onClick={form.handleSubmit(onLogin)}>Login</Button>
     </Box>

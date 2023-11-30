@@ -96,7 +96,11 @@ export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({
       userId: decoded.userId!,
     }));
 
-    return authContextState;
+    return {
+      isAdmin: decoded.isAdmin!,
+      userId: decoded.userId!,
+      isAuthenticated: true,
+    };
   };
 
   const logout: AuthContextHelpersType["logout"] = async () => {
