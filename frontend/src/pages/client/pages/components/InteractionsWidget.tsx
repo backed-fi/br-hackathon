@@ -87,11 +87,11 @@ export const InteractionsWidget: React.FC = () => {
           !value
         );
 
-        snackbar.enqueueSnackbar("Login success", {
+        snackbar.enqueueSnackbar(`${!value ? "Buy" : "Sell"} success`, {
           variant: "success",
         });
       } catch (e) {
-        snackbar.enqueueSnackbar("Login failed", {
+        snackbar.enqueueSnackbar(`${!value ? "Buy" : "Sell"} fail`, {
           variant: "error",
         });
       }
