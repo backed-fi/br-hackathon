@@ -1,11 +1,22 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { AuthenticatedOnly } from "../../../components/AuthenticatedOnly";
+import { InteractionsWidget } from "./components/InteractionsWidget";
 
 export const IssuePage: React.FC = () => {
   return (
     <AuthenticatedOnly>
-      <Box>Isssue!</Box>
+      <Box
+        sx={{
+          marginTop: "auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+        }}
+      >
+        <InteractionsWidget></InteractionsWidget>
+      </Box>
     </AuthenticatedOnly>
   );
 };

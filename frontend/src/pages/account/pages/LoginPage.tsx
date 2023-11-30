@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useApiContext } from "../../../context/ApiContext";
 import { useAuthContext } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Schema = z.object({
   login: z.string().nonempty("The comment is required!"),
@@ -15,6 +16,8 @@ const Schema = z.object({
 type SchemaType = z.infer<typeof Schema>;
 
 export const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const { client } = useApiContext();
   const { authenticate } = useAuthContext();
   const snackbar = useSnackbar();
@@ -33,6 +36,12 @@ export const LoginPage: React.FC = () => {
       const { accessToken, userId, isAdmin } = response;
 
       authenticate(accessToken, userId, isAdmin);
+
+      if (isAdmin) {
+        navigate("/admin/orders");
+      } else {
+        navigate("/client/issue");
+      }
 
       snackbar.enqueueSnackbar("Login success", {
         variant: "success",
