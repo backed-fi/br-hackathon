@@ -80,7 +80,7 @@ export const OrdersPage: React.FC = () => {
     }> = {};
 
     await Promise.all(
-      Array.from(Array(details.currentEpoch.toNumber()))
+      Array.from(Array(details.currentEpoch.toNumber() + 1))
         .map(async (_, index) => {
           epochList[index] = {
             ...(await contract.epochDetails(tokenAddress, index)) as any,
