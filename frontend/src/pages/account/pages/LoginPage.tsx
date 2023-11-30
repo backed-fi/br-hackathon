@@ -33,11 +33,11 @@ export const LoginPage: React.FC = () => {
         password: data.password,
       });
 
-      const { accessToken, userId, isAdmin } = response;
+      const { accessToken } = response;
 
-      authenticate(accessToken, userId, isAdmin);
+      const auth = await authenticate(accessToken);
 
-      if (isAdmin) {
+      if (auth.isAdmin) {
         navigate("/admin/orders");
       } else {
         navigate("/client/issue");

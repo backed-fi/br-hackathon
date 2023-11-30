@@ -1,7 +1,12 @@
 import React from "react";
 import { SnackbarProvider } from "notistack";
 import CssBaseline from "@mui/material/CssBaseline";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 
 import { AdminPages } from "./pages/admin/AdminPages";
 import { AccountPages } from "./pages/account/AccountPages";
@@ -34,6 +39,7 @@ function App() {
                 <Route path="errors">
                   <Route path="unauthorized" element={<ForbiddenPage />} />
                 </Route>
+                <Route path="*" element={<Navigate to="/accounts/login" />} />
               </Routes>
             </ApiContextProvider>
           </AuthContextProvider>

@@ -22,7 +22,7 @@ interface AuthContextHelpersType {
    *
    * @param token - The valid JWT auth token
    */
-  authenticate: (token: string, userId: string, isAdmin: boolean) => void;
+  authenticate: (token: string) => Promise<AuthContextPayloadType>;
 
   /**
    * Function, used for logging out the currently authenticated user
@@ -87,10 +87,16 @@ export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({
   ) => {
     localStorage.setItem(LocalStorage.AuthToken, token);
 
+    const decoded = decodeToken();
+
     setAuthContextState((prevState) => ({
       ...prevState,
       isAuthenticated: true,
+      isAdmin: decoded.isAdmin!,
+      userId: decoded.userId!,
     }));
+
+    return authContextState;
   };
 
   const logout: AuthContextHelpersType["logout"] = async () => {
@@ -129,13 +135,12 @@ export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({
 
   // endregion
 
-
   return (
     <AuthContext.Provider
       value={{
         ...authContextState,
         authenticate,
-        logout
+        logout,
       }}
       children={children}
     />
