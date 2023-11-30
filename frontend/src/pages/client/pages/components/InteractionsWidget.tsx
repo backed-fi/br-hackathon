@@ -57,8 +57,8 @@ export const InteractionsWidget: React.FC = () => {
       try {
         await contract.scheduleOrder(
           ASSETS[asset].address!,
-          ethers.utils.parseEther(data.amount.toString()),
-          !!value
+          data.amount * 10 ** (!value ? 6 : 18),
+          !value
         );
 
         snackbar.enqueueSnackbar("Login success", {
