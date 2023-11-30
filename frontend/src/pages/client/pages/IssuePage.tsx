@@ -12,7 +12,7 @@ export const IssuePage: React.FC = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "100%",
+          height: "100vh",
         }}
       >
         <InteractionsWidget></InteractionsWidget>

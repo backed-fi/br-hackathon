@@ -57,7 +57,7 @@ export const InteractionsWidget: React.FC = () => {
       try {
         await contract.scheduleOrder(
           ASSETS[asset].address!,
-          data.amount,
+          ethers.utils.parseEther(data.amount.toString()),
           !!value
         );
 
@@ -98,7 +98,8 @@ export const InteractionsWidget: React.FC = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column"
+            paddingTop: "32px",
+            flexDirection: "column",
           }}
         >
           <Typography>Select asset:</Typography>
@@ -123,10 +124,20 @@ export const InteractionsWidget: React.FC = () => {
       </CardContent>
       <CardActions>
         {!signer && (
-          <Button onClick={connectWallet}>Connect your wallet</Button>
+          <Button
+            sx={{ width: "100%" }}
+            variant="contained"
+            onClick={connectWallet}
+          >
+            Connect your wallet
+          </Button>
         )}
         {signer && (
-          <Button size="small" onClick={form.handleSubmit(confirm)}>
+          <Button
+            sx={{ width: "100%" }}
+            variant="contained"
+            onClick={form.handleSubmit(confirm)}
+          >
             Confirm
           </Button>
         )}
