@@ -8,11 +8,9 @@ export const IssuePage: React.FC = () => {
     <AuthenticatedOnly>
       <Box
         sx={{
-          marginTop: "auto",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "100vh",
         }}
       >
         <InteractionsWidget></InteractionsWidget>
