@@ -22,6 +22,7 @@ import { ASSETS } from "../../../../constants/Assets";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
+import { LoadingButton } from "@mui/lab";
 
 const Schema = z.object({
   amount: z.number().nonnegative().int(),
@@ -34,6 +35,7 @@ export const InteractionsWidget: React.FC = () => {
 
   const [value, setValue] = React.useState(0);
   const [asset, setAsset] = React.useState<"LFT" | "LFN" | "NTN-F">("LFT");
+  const [loading, setLoading] = React.useState(false);
 
   const form = useForm<SchemaType>({
     resolver: zodResolver(Schema),
@@ -64,6 +66,7 @@ export const InteractionsWidget: React.FC = () => {
   }, [signer]);
   const confirm = async (data: SchemaType) => {
     if (contract && stableContract) {
+      setLoading(true);
       try {
         if (!value) {
           await stableContract.approve(
@@ -81,16 +84,20 @@ export const InteractionsWidget: React.FC = () => {
           );
         }
 
-        await contract.scheduleOrder(
+        const tx = await contract.scheduleOrder(
           ASSETS[asset].address!,
           data.amount * 10 ** (!value ? 6 : 18),
           !value
         );
 
+        await tx.wait();
+
+        setLoading(false);
         snackbar.enqueueSnackbar(`${!value ? "Buy" : "Sell"} success`, {
           variant: "success",
         });
       } catch (e) {
+        setLoading(false);
         snackbar.enqueueSnackbar(`${!value ? "Buy" : "Sell"} fail`, {
           variant: "error",
         });
@@ -159,13 +166,14 @@ export const InteractionsWidget: React.FC = () => {
           </Button>
         )}
         {signer && (
-          <Button
+          <LoadingButton
+            loading={loading}
             sx={{ width: "100%" }}
             variant="contained"
             onClick={form.handleSubmit(confirm)}
           >
             Confirm
-          </Button>
+          </LoadingButton>
         )}
       </CardActions>
     </Card>

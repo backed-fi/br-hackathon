@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useSnackbar } from "notistack";
 import { useForm } from "react-hook-form";
@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useApiContext } from "../../../context/ApiContext";
 import { useNavigate } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 const Schema = z.object({
   login: z.string().nonempty("The login is required!"),
@@ -16,9 +17,11 @@ type SchemaType = z.infer<typeof Schema>;
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const snackbar = useSnackbar();
 
   const { client } = useApiContext();
-  const snackbar = useSnackbar();
+
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<SchemaType>({
     resolver: zodResolver(Schema),
@@ -26,19 +29,23 @@ export const RegisterPage: React.FC = () => {
 
   const onRegister = async (data: SchemaType) => {
     try {
+      setLoading(true);
+
       const { data: response } = await client.post("/public/user/register", {
         username: data.login,
         password: data.password,
       });
 
-      const { user } = response;
-
       snackbar.enqueueSnackbar("Register success", {
         variant: "success",
       });
 
+      setLoading(false);
+
       navigate("/accounts/login");
     } catch (e) {
+      setLoading(false);
+
       snackbar.enqueueSnackbar("Register failed", {
         variant: "error",
       });
@@ -64,9 +71,13 @@ export const RegisterPage: React.FC = () => {
       <Typography variant="subtitle1">Password</Typography>
       <TextField type="password" {...form.register("password")} />
 
-      <Button variant="contained" onClick={form.handleSubmit(onRegister)}>
+      <LoadingButton
+        loading={loading}
+        variant="contained"
+        onClick={form.handleSubmit(onRegister)}
+      >
         Register
-      </Button>
+      </LoadingButton>
     </Box>
   );
 };

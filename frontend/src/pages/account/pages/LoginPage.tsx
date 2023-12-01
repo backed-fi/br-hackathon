@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useSnackbar } from "notistack";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useApiContext } from "../../../context/ApiContext";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 const Schema = z.object({
   login: z.string().nonempty("The login is required!"),
@@ -17,10 +18,12 @@ type SchemaType = z.infer<typeof Schema>;
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const snackbar = useSnackbar();
 
   const { client } = useApiContext();
   const { authenticate } = useAuthContext();
-  const snackbar = useSnackbar();
+
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<SchemaType>({
     resolver: zodResolver(Schema),
@@ -28,6 +31,8 @@ export const LoginPage: React.FC = () => {
 
   const onLogin = async (data: SchemaType) => {
     try {
+      setLoading(true);
+
       const { data: response } = await client.post("/public/auth/login", {
         username: data.login,
         password: data.password,
@@ -36,6 +41,8 @@ export const LoginPage: React.FC = () => {
       const { accessToken } = response;
 
       const auth = await authenticate(accessToken);
+
+      setLoading(false);
 
       if (auth.isAdmin) {
         navigate("/admin/orders");
@@ -47,6 +54,8 @@ export const LoginPage: React.FC = () => {
         variant: "success",
       });
     } catch (e) {
+      setLoading(false);
+
       snackbar.enqueueSnackbar("Login failed", {
         variant: "error",
       });
@@ -71,9 +80,13 @@ export const LoginPage: React.FC = () => {
 
       <TextField type="password" {...form.register("password")} />
 
-      <Button variant="contained" onClick={form.handleSubmit(onLogin)}>
+      <LoadingButton
+        loading={loading}
+        variant="contained"
+        onClick={form.handleSubmit(onLogin)}
+      >
         Login
-      </Button>
+      </LoadingButton>
       <Button onClick={() => navigate("/accounts/register")}>Register</Button>
     </Box>
   );
