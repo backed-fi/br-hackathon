@@ -39,13 +39,14 @@ export default class User extends EntityBase<string> {
     this.id = attributes.id;
     this.username = attributes.username;
     this.password = attributes.password;
+    this.role = attributes.role;
   }
 
   public validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password || '');
   }
 
-  public static create(attributes: UserAttributes): UserAttributes {
+  public static create(attributes: UserAttributes): User {
     return new User(attributes);
   }
 }

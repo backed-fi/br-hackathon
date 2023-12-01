@@ -9,8 +9,7 @@ import IUserRepository from '@domain/user/user.repository';
 @Injectable()
 export class UserRepository
   extends Repository<User>
-  implements IUserRepository
-{
+  implements IUserRepository {
   constructor(entityManager: EntityManager, eventBus: EventBus) {
     super(entityManager, User, eventBus);
   }

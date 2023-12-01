@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useApiContext } from "../../../context/ApiContext";
-import { useAuthContext } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Schema = z.object({
@@ -15,39 +14,32 @@ const Schema = z.object({
 
 type SchemaType = z.infer<typeof Schema>;
 
-export const LoginPage: React.FC = () => {
+export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
   const { client } = useApiContext();
-  const { authenticate } = useAuthContext();
   const snackbar = useSnackbar();
 
   const form = useForm<SchemaType>({
     resolver: zodResolver(Schema),
   });
 
-  const onLogin = async (data: SchemaType) => {
+  const onRegister = async (data: SchemaType) => {
     try {
-      const { data: response } = await client.post("/public/auth/login", {
+      const { data: response } = await client.post("/public/user/register", {
         username: data.login,
         password: data.password,
       });
 
-      const { accessToken } = response;
+      const { user } = response;
 
-      const auth = await authenticate(accessToken);
-
-      if (auth.isAdmin) {
-        navigate("/admin/orders");
-      } else {
-        navigate("/client/issue");
-      }
-
-      snackbar.enqueueSnackbar("Login success", {
+      snackbar.enqueueSnackbar("Register success", {
         variant: "success",
       });
+
+      navigate("/accounts/login");
     } catch (e) {
-      snackbar.enqueueSnackbar("Login failed", {
+      snackbar.enqueueSnackbar("Register failed", {
         variant: "error",
       });
     }
@@ -65,16 +57,16 @@ export const LoginPage: React.FC = () => {
         flexFlow: "column",
       }}
     >
-      <Typography variant="subtitle1">Login</Typography>
+      <Typography variant="subtitle1">Register</Typography>
 
       <TextField {...form.register("login")} />
 
+      <Typography variant="subtitle1">Password</Typography>
       <TextField type="password" {...form.register("password")} />
 
-      <Button variant="contained" onClick={form.handleSubmit(onLogin)}>
-        Login
+      <Button variant="contained" onClick={form.handleSubmit(onRegister)}>
+        Register
       </Button>
-      <Button onClick={() => navigate("/accounts/register")}>Register</Button>
     </Box>
   );
 };
