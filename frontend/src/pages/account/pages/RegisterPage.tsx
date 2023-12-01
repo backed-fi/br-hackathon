@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useSnackbar } from "notistack";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import { useApiContext } from "../../../context/ApiContext";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
@@ -31,7 +31,7 @@ export const RegisterPage: React.FC = () => {
     try {
       setLoading(true);
 
-      const { data: response } = await client.post("/public/user/register", {
+      await client.post("/public/user/register", {
         username: data.login,
         password: data.password,
       });
