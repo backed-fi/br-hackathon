@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
+import { useWeb3Context } from "../../../../context/Web3Context";
 
 const Schema = z.object({
   amount: z.number().nonnegative().int(),
@@ -32,6 +33,7 @@ type SchemaType = z.infer<typeof Schema>;
 
 export const InteractionsWidget: React.FC = () => {
   const snackbar = useSnackbar();
+  const web3Context = useWeb3Context();
 
   const [value, setValue] = React.useState(0);
   const [asset, setAsset] = React.useState<"LFT" | "LFN" | "NTN-F">("LFT");
@@ -110,19 +112,11 @@ export const InteractionsWidget: React.FC = () => {
     }
   };
 
-  const connectWallet = async () => {
-    const provider = new ethers.providers.Web3Provider(
-      (window as any).ethereum
-    );
-
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-
-    setSigner({
-      signer,
-      address: await signer.getAddress(),
-    });
-  };
+  React.useEffect(() => {
+    if (web3Context) {
+      setSigner({ signer: web3Context.signer, address: web3Context.account });
+    }
+  }, [web3Context]);
 
   return (
     <Card sx={{ width: 350 }}>
@@ -165,7 +159,7 @@ export const InteractionsWidget: React.FC = () => {
           <Button
             sx={{ width: "100%" }}
             variant="contained"
-            onClick={connectWallet}
+            onClick={web3Context.connectWallet}
           >
             Connect your wallet
           </Button>

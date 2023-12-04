@@ -8,16 +8,7 @@ import { AuthenticatedOnly } from "../../../components/AuthenticatedOnly";
 import { OrdersDialog } from "./components/OrdersDialog";
 import { SettleDialog } from "./components/SettleDialog";
 import { OrdersExchange__factory } from "../../../typechain";
-
-const supportedTokens = [
-  {
-    name: "Letras Financeiras do Tesouro",
-    address: "0xD73464667d5F2e15dd0A3C58C3610c39c1b1c2d4"
-  }, {
-    name: "Letras do Tesouro Nacional",
-    address: "0x0d9D5372b5F889bCEcb930b1540f7D1595075177"
-  }
-];
+import { ASSETS, SUPPORTED_ASSETS } from "../../../constants/Assets";
 
 export const OrdersPage: React.FC = () => {
   const [tokenDetails, setTokenDetails] = React.useState<{
@@ -36,13 +27,13 @@ export const OrdersPage: React.FC = () => {
         amount: BigNumber;
         recipient: string;
         isBuyOrder: boolean;
-      }[]
+      }[];
     }>;
   }>();
 
   const [{ signer, address }, setSigner] = React.useState<{
-    address?: string,
-    signer?: ethers.Signer
+    address?: string;
+    signer?: ethers.Signer;
   }>({});
 
   const contract = React.useMemo(() => {
@@ -63,7 +54,7 @@ export const OrdersPage: React.FC = () => {
 
     setSigner({
       signer,
-      address: await signer.getAddress()
+      address: await signer.getAddress(),
     });
   };
 
@@ -75,33 +66,36 @@ export const OrdersPage: React.FC = () => {
     // Get the token details
     const details = await contract.availableTokens(tokenAddress);
 
-    const epochList: Record<number, Awaited<ReturnType<typeof contract.epochDetails>> & {
-      orders: Awaited<ReturnType<typeof contract.epochOrders>>
-    }> = {};
+    const epochList: Record<
+      number,
+      Awaited<ReturnType<typeof contract.epochDetails>> & {
+        orders: Awaited<ReturnType<typeof contract.epochOrders>>;
+      }
+    > = {};
 
     await Promise.all(
-      Array.from(Array(details.currentEpoch.toNumber() + 1))
-      .map(async (_, index) => {
-        epochList[index] = {
-          ...(await contract.epochDetails(tokenAddress, index)) as any,
-          orders: (await contract.epochOrders(tokenAddress, index))
-        };
-      })
-      );
+      Array.from(Array(details.currentEpoch.toNumber() + 1)).map(
+        async (_, index) => {
+          epochList[index] = {
+            ...((await contract.epochDetails(tokenAddress, index)) as any),
+            orders: await contract.epochOrders(tokenAddress, index),
+          };
+        }
+      )
+    );
 
-      setTokenDetails({
+    setTokenDetails({
       tokenDetails: {
         tokenAddress,
-        currentEpoch: details.currentEpoch
+        currentEpoch: details.currentEpoch,
       },
       epochList: Object.entries(epochList)
         .map(([key, value]) => ({ id: Number(key), ...value }))
-        .sort((a, b) => b.id - a.id) as any
+        .sort((a, b) => b.id - a.id) as any,
     });
   };
 
   console.log(tokenDetails);
-
 
   return (
     <AuthenticatedOnly>
@@ -110,15 +104,11 @@ export const OrdersPage: React.FC = () => {
           mt: "64px",
           display: "flex",
           flexFlow: "column",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         {!signer && (
-          <Button
-            onClick={connectWallet}
-          >
-            Connect your wallet
-          </Button>
+          <Button onClick={connectWallet}>Connect your wallet</Button>
         )}
 
         {signer && (
@@ -126,119 +116,121 @@ export const OrdersPage: React.FC = () => {
             <Typography
               sx={{
                 fontSize: "24px",
-                fontWeight: "700"
-              }}
-            >
-              Select an asset
-            </Typography>
-
-            <Typography>
-              Connected to {address}
-            </Typography>
-
-            {!tokenDetails && supportedTokens.map((supportedToken) => (
-              <Box
-                sx={{
+                fontWeight: "700",
+                ...(tokenDetails && {
                   cursor: "pointer",
-                  borderRadius: "4px",
-                  marginTop: "1rem",
-                  padding: "1rem",
-                  width: "400px",
-                  border: "1px solid #D9D9D9"
-                }}
-                onClick={loadToken(supportedToken.address)}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "18px",
-                    fontWeight: "700"
-                  }}
-                >
-                  {supportedToken.name}
-                </Typography>
+                }),
+              }}
+              onClick={() => setTokenDetails(null as any)}
+            >
+              {tokenDetails ? "Go back to asset selection" : "Select an asset"}
+            </Typography>
 
-                <Typography
+            {!tokenDetails &&
+              SUPPORTED_ASSETS.map((supportedToken) => (
+                <Box
                   sx={{
-                    fontSize: "14px",
-                    fontWeight: "500",
-                    opacity: ".5"
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                    marginTop: "1rem",
+                    padding: "1rem",
+                    width: "400px",
+                    border: "1px solid #D9D9D9",
                   }}
+                  onClick={loadToken(
+                    ASSETS[supportedToken as "LFT" | "LFN"].address!
+                  )}
                 >
-                  {supportedToken.address}
-                </Typography>
-              </Box>
-            ))}
+                  <Typography
+                    sx={{
+                      fontSize: "18px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    {ASSETS[supportedToken as "LFT" | "LFN"].name}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      opacity: ".5",
+                    }}
+                  >
+                    {ASSETS[supportedToken as "LFT" | "LFN"].address}
+                  </Typography>
+                </Box>
+              ))}
 
             {tokenDetails && (
               <DataGrid
                 sx={{
                   width: "100%",
-                  maxWidth: "1024px"
+                  maxWidth: "1024px",
                 }}
                 rows={tokenDetails.epochList}
-                columns={[{
-                  field: "settled",
-                  headerName: "Is Settled",
-                  renderCell: ({ value }) => value ? "Yes" : "No"
-                }, {
-                  minWidth: 200,
-                  field: "valueBought",
-                  headerName: "Value Bought",
-                  renderCell: ({ value }) => (
-                    `~${ethers.utils.formatUnits(value, 6)} BRL`
-                  )
-                }, {
-                  minWidth: 200,
-                  field: "amountSold",
-                  headerName: "Amount Sold",
-                  renderCell: ({ value }) => (
-                    `~${ethers.utils.formatUnits(value, 18)} units`
-                  )
-                }, {
-                  minWidth: 200,
-                  field: "orders",
-                  headerName: "Orders in settlement",
-                  renderCell: ({ value }) => (
-                    value.length
-                  )
-                }, {
-                  flex: 1,
-                  field: "id",
-                  headerName: "Actions",
-                  renderCell: ({ value, row }) => {
-                    return (
-                      <Box
-                        sx={{
-                          gap: "1rem",
-                          width: "100%",
-                          display: "flex",
-                          justifyContent: "flex-end"
-                        }}
-                      >
-                        <OrdersDialog
-                          orders={row.orders}
-                        />
+                columns={[
+                  {
+                    field: "settled",
+                    headerName: "Is Settled",
+                    renderCell: ({ value }) => (value ? "Yes" : "No"),
+                  },
+                  {
+                    minWidth: 200,
+                    field: "valueBought",
+                    headerName: "Value Bought",
+                    renderCell: ({ value }) =>
+                      `~${ethers.utils.formatUnits(value, 6)} BRL`,
+                  },
+                  {
+                    minWidth: 200,
+                    field: "amountSold",
+                    headerName: "Amount Sold",
+                    renderCell: ({ value }) =>
+                      `~${ethers.utils.formatUnits(value, 18)} units`,
+                  },
+                  {
+                    minWidth: 200,
+                    field: "orders",
+                    headerName: "Orders in settlement",
+                    renderCell: ({ value }) => value.length,
+                  },
+                  {
+                    flex: 1,
+                    field: "id",
+                    headerName: "Actions",
+                    renderCell: ({ value, row }) => {
+                      return (
+                        <Box
+                          sx={{
+                            gap: "1rem",
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "flex-end",
+                          }}
+                        >
+                          <OrdersDialog orders={row.orders} />
 
-                        {!row.settled && (
-                          <SettleDialog
-                            onSettled={loadToken}
-                            exchangeContract={contract!}
-                            epochId={row.id}
-                            tokenAddress={tokenDetails?.tokenDetails.tokenAddress!}
-                          />
-                        )}
-                      </Box>
-                    );
-                  }
-                }]}
+                          {!row.settled && (
+                            <SettleDialog
+                              onSettled={loadToken}
+                              exchangeContract={contract!}
+                              epochId={row.id}
+                              tokenAddress={
+                                tokenDetails?.tokenDetails.tokenAddress!
+                              }
+                            />
+                          )}
+                        </Box>
+                      );
+                    },
+                  },
+                ]}
               />
             )}
           </React.Fragment>
         )}
-
       </Box>
     </AuthenticatedOnly>
-
-  )
-    ;
+  );
 };

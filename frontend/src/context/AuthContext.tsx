@@ -12,6 +12,7 @@ interface AuthContextPayloadType {
   isAuthenticated: boolean;
 
   userId: string;
+  username: string;
   isAdmin: boolean;
 }
 
@@ -48,7 +49,11 @@ const isTokenValid = () => {
   return isFuture(new Date((decodedToken.exp || 0) * 1000));
 };
 
-const decodeToken = (): { userId?: string; isAdmin?: boolean } & JWTPayload => {
+const decodeToken = (): {
+  userId?: string;
+  username?: string;
+  isAdmin?: boolean;
+} & JWTPayload => {
   const token = localStorage.getItem(LocalStorage.AuthToken);
 
   if (!token) {
@@ -64,6 +69,7 @@ const defaultContextData: AuthContextPayloadType = {
   isAuthenticated: isTokenValid(),
   isAdmin: decodeToken().isAdmin || false,
   userId: decodeToken().userId || "",
+  username: decodeToken().username || "",
 };
 
 const AuthContext = React.createContext<AuthContextType>(
@@ -93,12 +99,14 @@ export const AuthContextProvider: React.FC<React.PropsWithChildren<any>> = ({
       ...prevState,
       isAuthenticated: true,
       isAdmin: decoded.isAdmin!,
+      username: decoded.username!,
       userId: decoded.userId!,
     }));
 
     return {
       isAdmin: decoded.isAdmin!,
       userId: decoded.userId!,
+      username: decoded.username!,
       isAuthenticated: true,
     };
   };

@@ -12,3 +12,5 @@ export const ASSETS = {
     address: process.env.REACT_APP_TOKEN_NTN_ADDRESS
   }
 }
+
+export const SUPPORTED_ASSETS = Object.keys(ASSETS);

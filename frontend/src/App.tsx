@@ -17,6 +17,7 @@ import { ForbiddenPage } from "./pages/errors/ForbiddenPage";
 import { ClientPages } from "./pages/client/ClientPages";
 import { NavigationBar } from "./components/NavigationBar";
 import { DashboardLayout } from "./components/Layout";
+import { Web3ContextProvider } from "./context/Web3Context";
 
 function App() {
   return (
@@ -32,21 +33,26 @@ function App() {
           }}
         >
           <AuthContextProvider>
-            <ApiContextProvider>
-              <NavigationBar></NavigationBar>
-              <Routes>
-                <Route element={<DashboardLayout></DashboardLayout>}>
-                  {AdminPages}
-                  {ClientPages}
-                  {AccountPages}
+            <Web3ContextProvider>
+              <ApiContextProvider>
+                <NavigationBar></NavigationBar>
+                <Routes>
+                  <Route element={<DashboardLayout></DashboardLayout>}>
+                    {AdminPages}
+                    {ClientPages}
+                    {AccountPages}
 
-                  <Route path="errors">
-                    <Route path="unauthorized" element={<ForbiddenPage />} />
+                    <Route path="errors">
+                      <Route path="unauthorized" element={<ForbiddenPage />} />
+                    </Route>
+                    <Route
+                      path="*"
+                      element={<Navigate to="/accounts/login" />}
+                    />
                   </Route>
-                  <Route path="*" element={<Navigate to="/accounts/login" />} />
-                </Route>
-              </Routes>
-            </ApiContextProvider>
+                </Routes>
+              </ApiContextProvider>
+            </Web3ContextProvider>
           </AuthContextProvider>
         </SnackbarProvider>
       </Router>

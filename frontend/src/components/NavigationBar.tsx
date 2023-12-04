@@ -72,21 +72,31 @@ export const NavigationBar: React.FC = ({ ...props }) => {
               </Box>
             )}
             {!authContext.isAdmin && (
-              <Box
-                sx={{
-                  cursor: "pointer",
-                  flexGrow: 1,
-                }}
-                onClick={() => navigate("/client/issue")}
-              >
-                Place order
-              </Box>
+              <React.Fragment>
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate("/client/placeOrder")}
+                >
+                  Place order
+                </Box>
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate("/client/holdings")}
+                >
+                  Holdings
+                </Box>
+              </React.Fragment>
             )}
             <Box
               sx={{
                 display: "flex",
                 alignItems: "flex-end",
                 flexDirection: "column",
+                flexGrow: 1,
               }}
             >
               <Typography
@@ -94,7 +104,7 @@ export const NavigationBar: React.FC = ({ ...props }) => {
                   fontSize: 14,
                 }}
               >
-                {authContext.userId}
+                {authContext.username}
               </Typography>
             </Box>
 
