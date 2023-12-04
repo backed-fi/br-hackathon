@@ -71,7 +71,9 @@ export const InteractionsWidget: React.FC = () => {
         if (!value) {
           await stableContract.approve(
             process.env.REACT_APP_SWAP_CONTRACT_ADDRESS as string,
-            BigNumber.from(data.amount).mul(10 ** 6)
+            BigNumber.from(data.amount)
+              .mul(BigNumber.from(10).pow(6))
+              .toString()
           );
         } else {
           const contract = new ERC20Mock__factory()
@@ -80,13 +82,16 @@ export const InteractionsWidget: React.FC = () => {
 
           await contract.approve(
             process.env.REACT_APP_SWAP_CONTRACT_ADDRESS as string,
-            BigNumber.from(data.amount).mul(10 ** 18)
+            BigNumber.from(data.amount)
+              .mul(BigNumber.from(10).pow(18))
+              .toString()
           );
         }
-
         const tx = await contract.scheduleOrder(
           ASSETS[asset].address!,
-          BigNumber.from(data.amount).mul(10 ** (!value ? 6 : 18)),
+          BigNumber.from(data.amount)
+            .mul(BigNumber.from(10).pow(!value ? 6 : 18))
+            .toString(),
           !value
         );
 
