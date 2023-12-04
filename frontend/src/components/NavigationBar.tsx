@@ -47,7 +47,7 @@ export const NavigationBar: React.FC = ({ ...props }) => {
               }}
               onClick={() => navigate("/accounts/register")}
             >
-              Register
+              Register user
             </Box>
           </Box>
         )}
@@ -68,7 +68,7 @@ export const NavigationBar: React.FC = ({ ...props }) => {
                 }}
                 onClick={() => navigate("/admin/orders")}
               >
-                Orders
+                Orders management
               </Box>
             )}
             {!authContext.isAdmin && (
@@ -79,7 +79,7 @@ export const NavigationBar: React.FC = ({ ...props }) => {
                 }}
                 onClick={() => navigate("/client/issue")}
               >
-                Issue
+                Place order
               </Box>
             )}
             <Box

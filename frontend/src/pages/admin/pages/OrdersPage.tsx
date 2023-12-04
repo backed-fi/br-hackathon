@@ -81,15 +81,15 @@ export const OrdersPage: React.FC = () => {
 
     await Promise.all(
       Array.from(Array(details.currentEpoch.toNumber() + 1))
-        .map(async (_, index) => {
-          epochList[index] = {
-            ...(await contract.epochDetails(tokenAddress, index)) as any,
-            orders: (await contract.epochOrders(tokenAddress, index))
-          };
-        })
-    );
+      .map(async (_, index) => {
+        epochList[index] = {
+          ...(await contract.epochDetails(tokenAddress, index)) as any,
+          orders: (await contract.epochOrders(tokenAddress, index))
+        };
+      })
+      );
 
-    setTokenDetails({
+      setTokenDetails({
       tokenDetails: {
         tokenAddress,
         currentEpoch: details.currentEpoch

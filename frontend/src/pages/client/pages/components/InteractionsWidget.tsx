@@ -93,12 +93,12 @@ export const InteractionsWidget: React.FC = () => {
         await tx.wait();
 
         setLoading(false);
-        snackbar.enqueueSnackbar(`${!value ? "Buy" : "Sell"} success`, {
+        snackbar.enqueueSnackbar(`Order placed successfully`, {
           variant: "success",
         });
       } catch (e) {
         setLoading(false);
-        snackbar.enqueueSnackbar(`${!value ? "Buy" : "Sell"} fail`, {
+        snackbar.enqueueSnackbar(`Order placement failed`, {
           variant: "error",
         });
       }
