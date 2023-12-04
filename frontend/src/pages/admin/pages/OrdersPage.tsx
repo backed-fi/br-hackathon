@@ -30,7 +30,7 @@ export const OrdersPage: React.FC = () => {
       }[];
     }>;
   }>();
-
+  // eslint-disable-next-line
   const [{ signer, address }, setSigner] = React.useState<{
     address?: string;
     signer?: ethers.Signer;

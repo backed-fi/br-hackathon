@@ -27,8 +27,6 @@ export const HoldingsPage: React.FC = () => {
 
       const balance = await contract.balanceOf(address);
 
-      console.log(balance.toString());
-
       x = {
         ...x,
         [asset]: balance.div(BigNumber.from(10).pow(18)).toString(),
@@ -48,6 +46,7 @@ export const HoldingsPage: React.FC = () => {
     if (signer) {
       fetchBalances();
     }
+    // eslint-disable-next-line
   }, [signer]);
 
   return (

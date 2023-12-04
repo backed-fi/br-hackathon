@@ -117,6 +117,7 @@ export const Web3ContextProvider: React.FC<React.PropsWithChildren<any>> = ({
     }
 
     return;
+    // eslint-disable-next-line
   }, []);
 
   // Update the context on graphql data changes
