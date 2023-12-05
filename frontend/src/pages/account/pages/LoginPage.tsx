@@ -47,7 +47,7 @@ export const LoginPage: React.FC = () => {
       if (auth.isAdmin) {
         navigate("/admin/orders");
       } else {
-        navigate("/client/issue");
+        navigate("/client/placeOrder");
       }
 
       snackbar.enqueueSnackbar("Login success", {

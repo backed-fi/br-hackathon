@@ -108,21 +108,12 @@ export const InteractionsWidget: React.FC = () => {
           variant: "success",
         });
       } catch (e) {
-        setLoading(false);
         snackbar.enqueueSnackbar(`Order placement failed`, {
           variant: "error",
         });
+      } finally {
+        setLoading(false);
       }
-    }
-  };
-
-  const fetch = async () => {
-    if (contract) {
-      const address = await signer!.getAddress();
-
-      const x = await contract.userOrders(address, ASSETS.LFN.address!);
-
-      console.log(x);
     }
   };
 
@@ -131,13 +122,6 @@ export const InteractionsWidget: React.FC = () => {
       setSigner({ signer: web3Context.signer, address: web3Context.account });
     }
   }, [web3Context]);
-
-  React.useEffect(() => {
-    if (signer) {
-      fetch();
-    }
-  // eslint-disable-next-line
-  }, [signer]);
 
   return (
     <Card sx={{ width: 350 }}>
