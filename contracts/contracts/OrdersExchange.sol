@@ -46,6 +46,7 @@ struct EpochDetails {
     uint256 valueBought;
     uint256 amountSold;
     bool settled;
+    uint256 settledAt;
     uint256 executionPrice;
     uint256[] ordersIds;
 }
@@ -55,6 +56,7 @@ struct OrderDetails {
     uint256 amount;
     address recipient;
     bool isBuyOrder;
+    uint256 createdAt;
 }
 
 /**
@@ -109,7 +111,8 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
             token: token,
             amount: amount,
             isBuyOrder: buyOrder,
-            recipient: msg.sender
+            recipient: msg.sender,
+            createdAt: block.timestamp
         }));
         uint256 currentEpoch = availableTokens[token].currentEpoch;
         epochDetails[token][currentEpoch].ordersIds.push(orderId);
@@ -118,6 +121,7 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
         } else {
           epochDetails[token][currentEpoch].amountSold += amount;  
         }
+        userTokenOrders[msg.sender][token].push(orderId);
         address tokenToPull = buyOrder ? stablecoin : token;
         IERC20(tokenToPull).safeTransferFrom(msg.sender, address(this), amount);
         return orderId;
@@ -150,6 +154,7 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
             valueBought: 0,
             amountSold: 0,
             settled: false,
+            settledAt: 0,
             executionPrice: 0,
             ordersIds: new uint256[](0)
         }));
@@ -167,6 +172,7 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
             valueBought: 0,
             amountSold: 0,
             settled: false,
+            settledAt: 0,
             executionPrice: 0,
             ordersIds: new uint256[](0)
         }));
@@ -184,6 +190,7 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
         uint256 soldValue = epoch.amountSold * price / 1e18 / stablecoinScaleFactor;
         epoch.settled = true;
         epoch.executionPrice = price;
+        epoch.settledAt = block.timestamp;
 
         if(soldValue > epoch.valueBought) {
             IERC20(stablecoin).safeTransferFrom(msg.sender, address(this), (soldValue - epoch.valueBought));

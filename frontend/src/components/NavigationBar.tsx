@@ -89,6 +89,14 @@ export const NavigationBar: React.FC = ({ ...props }) => {
                 >
                   Holdings
                 </Box>
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate("/client/history")}
+                >
+                  Orders history
+                </Box>
               </React.Fragment>
             )}
             <Box
