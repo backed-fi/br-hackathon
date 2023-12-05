@@ -119,6 +119,8 @@ export const InteractionsWidget: React.FC = () => {
           variant: "success",
         });
       } catch (e) {
+        console.log(e)
+        setLoading(false);
         snackbar.enqueueSnackbar(`Order placement failed`, {
           variant: "error",
         });

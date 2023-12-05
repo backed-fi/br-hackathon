@@ -53,7 +53,8 @@ export const SettleDialog: React.FC<Props> = ({ exchangeContract, epochId, token
       }
 
 
-    } catch {
+    } catch (e) {
+      console.log("onCloseEpoch", e)
     } finally {
       setCurrentStep(1);
       setLoading(false);
@@ -71,7 +72,8 @@ export const SettleDialog: React.FC<Props> = ({ exchangeContract, epochId, token
       await onSettled(tokenAddress);
 
       toggle();
-    } catch {
+    } catch (e){
+      console.log("onSettle", e)
     } finally {
       setLoading(false);
     }
@@ -129,7 +131,7 @@ export const SettleDialog: React.FC<Props> = ({ exchangeContract, epochId, token
 
             <Step>
               <StepLabel>
-                Settle the settlement
+                Settle outstanding orders
               </StepLabel>
 
               <StepContent>
@@ -142,7 +144,7 @@ export const SettleDialog: React.FC<Props> = ({ exchangeContract, epochId, token
                   fullWidth
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
-                  label="Price Per Share"
+                  label="Price Per Share (R$)"
                   size="small"
                   sx={{
                     m: ".5rem 0"

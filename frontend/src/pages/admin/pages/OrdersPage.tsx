@@ -180,7 +180,7 @@ export const OrdersPage: React.FC = () => {
                     field: "valueBought",
                     headerName: "Value Bought",
                     renderCell: ({ value }) =>
-                      `~${ethers.utils.formatUnits(value, 6)} BRL`,
+                      `~${ethers.utils.formatUnits(value, 6)} BRLC`,
                   },
                   {
                     minWidth: 200,

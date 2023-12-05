@@ -100,7 +100,7 @@ export const HoldingsPage: React.FC = () => {
                   opacity: ".5",
                 }}
               >
-                Balance: {balances[supportedToken]} {supportedToken}
+                Balance: {new Intl.NumberFormat('en-US').format(Number(balances[supportedToken]))} {supportedToken}
               </Typography>
             )}
           </Box>
