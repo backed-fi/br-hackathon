@@ -32,7 +32,7 @@ async function main() {
 
   // Deploy orders exchange
   const implementation = await (await new OrdersExchange__factory(owner.signer).deploy()).waitForDeployment()
-  const proxyAdmin = await (await new ProxyAdmin__factory(owner.signer).deploy()).waitForDeployment()
+  const proxyAdmin = await (await new ProxyAdmin__factory(owner.signer).deploy(owner.address)).waitForDeployment()
   const proxy = await (await new TransparentUpgradeableProxy__factory(owner.signer).deploy(
     implementation.getAddress(),
     proxyAdmin.getAddress(),
