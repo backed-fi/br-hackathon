@@ -234,11 +234,12 @@ contract OrdersExchange is PausableUpgradeable, OwnableUpgradeable  {
         }
 
         OrderDetails[] memory fetchedOrders = new OrderDetails[](ordersLength);
+        uint256 currentIdx = 0;
         for(uint256 tokenIdx = 0; tokenIdx < availableTokensList.length; tokenIdx++) {
             address tokenAddress = availableTokensList[tokenIdx];
             for(uint256 idx = 0; idx < userTokenOrders[user][tokenAddress].length; idx++) {
                 OrderDetails storage order = orders[token][userTokenOrders[user][tokenAddress][idx]];
-                fetchedOrders[idx] = order;
+                fetchedOrders[currentIdx++] = order;
             }
         }
         return fetchedOrders;
