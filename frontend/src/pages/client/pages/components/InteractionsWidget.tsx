@@ -12,6 +12,9 @@ import {
   Tabs,
   Tab,
   MenuItem,
+  Stepper,
+  Step,
+  StepLabel,
 } from "@mui/material";
 import {
   ERC20Mock__factory,
@@ -25,6 +28,8 @@ import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
 import { useWeb3Context } from "../../../../context/Web3Context";
 
+const steps = ["Approve", "Sign transaction"];
+
 const Schema = z.object({
   amount: z.number().nonnegative().int(),
 });
@@ -34,6 +39,9 @@ type SchemaType = z.infer<typeof Schema>;
 export const InteractionsWidget: React.FC = () => {
   const snackbar = useSnackbar();
   const web3Context = useWeb3Context();
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [skipped, setSkipped] = React.useState(new Set<number>());
 
   const [value, setValue] = React.useState(0);
   const [asset, setAsset] = React.useState<"LFT" | "LFN" | "NTN-F">("LFT");
@@ -93,6 +101,7 @@ export const InteractionsWidget: React.FC = () => {
 
           await tx.wait();
         }
+        handleNext();
         const tx = await contract.scheduleOrder(
           ASSETS[asset].address!,
           BigNumber.from(data.amount)
@@ -103,6 +112,8 @@ export const InteractionsWidget: React.FC = () => {
 
         await tx.wait();
 
+        handleNext();
+
         setLoading(false);
         snackbar.enqueueSnackbar(`Order placed successfully`, {
           variant: "success",
@@ -112,9 +123,29 @@ export const InteractionsWidget: React.FC = () => {
           variant: "error",
         });
       } finally {
+        handleReset();
         setLoading(false);
       }
     }
+  };
+
+  const isStepSkipped = (step: number) => {
+    return skipped.has(step);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
+  const handleNext = () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
+
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped(newSkipped);
   };
 
   React.useEffect(() => {
@@ -170,14 +201,53 @@ export const InteractionsWidget: React.FC = () => {
           </Button>
         )}
         {signer && (
-          <LoadingButton
-            loading={loading}
-            sx={{ width: "100%" }}
-            variant="contained"
-            onClick={form.handleSubmit(confirm)}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: 1,
+            }}
           >
-            Confirm
-          </LoadingButton>
+            <Box
+              sx={{
+                display: "flex",
+                flexGrow: 1,
+                ...(loading && {
+                  paddingBottom: "16px",
+                }),
+              }}
+            >
+              <LoadingButton
+                loading={loading}
+                sx={{ width: "100%" }}
+                variant="contained"
+                onClick={form.handleSubmit(confirm)}
+              >
+                Confirm
+              </LoadingButton>
+            </Box>
+            {loading && (
+              <Stepper sx={{ paddingBottom: "8px" }} activeStep={activeStep}>
+                {steps.map((label, index) => {
+                  const stepProps: {
+                    completed?: boolean;
+                    active?: boolean;
+                  } = {};
+                  if (isStepSkipped(index)) {
+                    stepProps.completed = false;
+                  }
+                  if (loading && index === activeStep) {
+                    // stepProps.active = true;
+                  }
+                  return (
+                    <Step key={label} {...stepProps}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+            )}
+          </Box>
         )}
       </CardActions>
     </Card>
