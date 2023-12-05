@@ -71,23 +71,27 @@ export const InteractionsWidget: React.FC = () => {
       setLoading(true);
       try {
         if (!value) {
-          await stableContract.approve(
+          const tx = await stableContract.approve(
             process.env.REACT_APP_SWAP_CONTRACT_ADDRESS as string,
             BigNumber.from(data.amount)
               .mul(BigNumber.from(10).pow(6))
               .toString()
           );
+
+          await tx.wait();
         } else {
           const contract = new ERC20Mock__factory()
             .connect(signer!)
             .attach(ASSETS[asset].address! as string);
 
-          await contract.approve(
+          const tx = await contract.approve(
             process.env.REACT_APP_SWAP_CONTRACT_ADDRESS as string,
             BigNumber.from(data.amount)
               .mul(BigNumber.from(10).pow(18))
               .toString()
           );
+
+          await tx.wait();
         }
         const tx = await contract.scheduleOrder(
           ASSETS[asset].address!,
@@ -112,11 +116,27 @@ export const InteractionsWidget: React.FC = () => {
     }
   };
 
+  const fetch = async () => {
+    if (contract) {
+      const address = await signer!.getAddress();
+
+      const x = await contract.userOrders(address, ASSETS.LFN.address!);
+
+      console.log(x);
+    }
+  };
+
   React.useEffect(() => {
     if (web3Context) {
       setSigner({ signer: web3Context.signer, address: web3Context.account });
     }
   }, [web3Context]);
+
+  React.useEffect(() => {
+    if (signer) {
+      fetch();
+    }
+  }, [signer]);
 
   return (
     <Card sx={{ width: 350 }}>
