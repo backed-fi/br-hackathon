@@ -1,16 +1,16 @@
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { AuthenticatedOnly } from "../../../components/AuthenticatedOnly";
 import { ASSETS, SUPPORTED_ASSETS } from "../../../constants/Assets";
-import { BigNumber, ethers } from "ethers";
-import { ERC20Mock__factory, OrdersExchange__factory } from "../../../typechain";
+import { ethers } from "ethers";
+import { OrdersExchange__factory } from "../../../typechain";
 import { useWeb3Context } from "../../../context/Web3Context";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 export const PastTransactionsPage: React.FC = () => {
   const web3Context = useWeb3Context();
 
-  const [{ signer, address }, setSigner] = React.useState<{
+  const [{ signer }, setSigner] = React.useState<{
     address?: string;
     signer?: ethers.Signer;
   }>({});
@@ -58,6 +58,7 @@ export const PastTransactionsPage: React.FC = () => {
     if (signer) {
       fetchHistory();
     }
+  // eslint-disable-next-line
   }, [signer]);
 
   const columns: GridColDef[] = [

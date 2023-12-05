@@ -136,6 +136,7 @@ export const InteractionsWidget: React.FC = () => {
     if (signer) {
       fetch();
     }
+  // eslint-disable-next-line
   }, [signer]);
 
   return (
