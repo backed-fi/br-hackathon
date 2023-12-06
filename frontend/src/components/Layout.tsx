@@ -8,22 +8,29 @@ export const DashboardLayout = () => {
     <Box>
       <NavigationBar />
 
-      <Box
-        sx={{
-          display: "grid",
-        }}
-      >
-        {/* This is so that the sidebar stays here */}
-
+      <Box sx={{ display: "grid" }}>
         <Box
           sx={{
             paddingTop: "80px",
             minHeight: "100vh",
-            backgroundColor: "#f2f4f8",
+            position: "relative",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: "url(/mandala.png)",
+              backgroundSize: "cover",
+              opacity: 0.15,
+              zIndex: -1,
+            },
           }}
         >
           <Box
             sx={{
+              position: "relative",
               padding: "3rem",
               height: "100%",
             }}

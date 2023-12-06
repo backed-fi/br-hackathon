@@ -84,10 +84,26 @@ export const LoginPage: React.FC = () => {
         loading={loading}
         variant="contained"
         onClick={form.handleSubmit(onLogin)}
+        sx={{
+          backgroundColor: "#39429b",
+          '&:hover': {
+            backgroundColor: "#1976d2",
+          },
+        }}
       >
         Login
       </LoadingButton>
-      <Button onClick={() => navigate("/accounts/register")}>Register</Button>
+      <Button 
+        sx={{
+          color: '#39429b',
+          backgroundColor: "#fff",
+          '&:hover': {
+            backgroundColor: "#fff",
+          },
+        }}
+        onClick={() => navigate("/accounts/register")}>
+          Register
+      </Button>
     </Box>
   );
 };

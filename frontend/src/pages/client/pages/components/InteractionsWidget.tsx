@@ -157,7 +157,7 @@ export const InteractionsWidget: React.FC = () => {
   }, [web3Context]);
 
   return (
-    <Card sx={{ width: 350 }}>
+    <Card sx={{ width: 350, borderRadius: "0.8rem" }}>
       <CardContent>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs value={value} onChange={handleChange}>
@@ -195,7 +195,14 @@ export const InteractionsWidget: React.FC = () => {
       <CardActions>
         {!signer && (
           <Button
-            sx={{ width: "100%" }}
+            sx=
+            {{ 
+              width: "100%", 
+              backgroundColor: "#39429b",
+              '&:hover': {
+                backgroundColor: "#1976d2",
+              },
+            }}
             variant="contained"
             onClick={web3Context.connectWallet}
           >
@@ -221,7 +228,13 @@ export const InteractionsWidget: React.FC = () => {
             >
               <LoadingButton
                 loading={loading}
-                sx={{ width: "100%" }}
+                sx={{ 
+                  width: "100%",
+                  backgroundColor: "#39429b",
+                  '&:hover': {
+                    backgroundColor: "#1976d2",
+                  },
+                }}
                 variant="contained"
                 onClick={form.handleSubmit(confirm)}
               >

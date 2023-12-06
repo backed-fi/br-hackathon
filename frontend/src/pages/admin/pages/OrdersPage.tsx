@@ -108,23 +108,40 @@ export const OrdersPage: React.FC = () => {
         }}
       >
         {!signer && (
-          <Button onClick={connectWallet}>Connect your wallet</Button>
+          <Button
+            sx={{
+              backgroundColor: "#39429b",
+              '&:hover': {
+                backgroundColor: "#1976d2",
+              },
+              color: "#fff"
+            }}
+            onClick={connectWallet}>
+            Connect your wallet
+          </Button>
         )}
 
         {signer && (
           <React.Fragment>
-            <Typography
+            <Button
               sx={{
                 fontSize: "24px",
                 fontWeight: "700",
+                backgroundColor: "#39429b",
+                opacity: ".7",
+                '&:hover': {
+                  backgroundColor: "#1976d2",
+                },
                 ...(tokenDetails && {
                   cursor: "pointer",
                 }),
+                color: '#fff',
+                marginBottom: "1rem",
               }}
               onClick={() => setTokenDetails(null as any)}
             >
               {tokenDetails ? "Go back to asset selection" : "Select an asset"}
-            </Typography>
+            </Button>
 
             {!tokenDetails &&
               SUPPORTED_ASSETS.map((supportedToken) => (
@@ -136,6 +153,7 @@ export const OrdersPage: React.FC = () => {
                     padding: "1rem",
                     width: "400px",
                     border: "1px solid #D9D9D9",
+                    backgroundColor: "#82a8d9",
                   }}
                   onClick={loadToken(
                     ASSETS[supportedToken as "LFT" | "LFN"].address!
@@ -154,7 +172,7 @@ export const OrdersPage: React.FC = () => {
                     sx={{
                       fontSize: "14px",
                       fontWeight: "500",
-                      opacity: ".5",
+                      opacity: ".8",
                     }}
                   >
                     {ASSETS[supportedToken as "LFT" | "LFN"].address}
@@ -167,6 +185,8 @@ export const OrdersPage: React.FC = () => {
                 sx={{
                   width: "100%",
                   maxWidth: "1024px",
+                  borderRadius: "1rem",
+                  backgroundColor: "#D3D3D3",
                 }}
                 rows={tokenDetails.epochList}
                 columns={[
