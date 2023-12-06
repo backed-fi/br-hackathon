@@ -60,18 +60,26 @@ export const HoldingsPage: React.FC = () => {
         }}
       >
         {!signer && (
-          <Button variant="contained" onClick={web3Context.connectWallet}>
+          <Button 
+          sx={{
+            backgroundColor: "#39429b",
+            '&:hover': {
+              backgroundColor: "#1976d2",
+            },
+          }}
+          variant="contained" onClick={web3Context.connectWallet}>
             Connect your wallet
           </Button>
         )}
         {SUPPORTED_ASSETS.map((supportedToken) => (
           <Box
             sx={{
-              borderRadius: "4px",
+              borderRadius: "1rem",
               marginTop: "1rem",
               padding: "1rem",
               width: "400px",
               border: "1px solid #D9D9D9",
+              backgroundColor: "#82a8d9",
             }}
           >
             <Typography
@@ -87,7 +95,7 @@ export const HoldingsPage: React.FC = () => {
               sx={{
                 fontSize: "14px",
                 fontWeight: "500",
-                opacity: ".5",
+                opacity: ".8",
               }}
             >
               {ASSETS[supportedToken as "LFT" | "LFN"].address}
@@ -96,8 +104,7 @@ export const HoldingsPage: React.FC = () => {
               <Typography
                 sx={{
                   fontSize: "14px",
-                  fontWeight: "500",
-                  opacity: ".5",
+                  fontWeight: "700",
                 }}
               >
                 Balance: {new Intl.NumberFormat('en-US').format(Number(balances[supportedToken]))} {supportedToken}

@@ -44,7 +44,7 @@ export const PastTransactionsPage: React.FC = () => {
         token: asset
       })))
     }
-    x = x.sort((a,b) => a.createdAt.getTime() - b.createdAt.getTime())
+    x = x.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
     setHistory(x);
   };
 
@@ -58,16 +58,18 @@ export const PastTransactionsPage: React.FC = () => {
     if (signer) {
       fetchHistory();
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [signer]);
 
   const columns: GridColDef[] = [
     { field: 'createdAt', type: 'dateTime', headerName: 'Created at', width: 260 },
     { field: 'token', headerName: 'For Token', width: 130 },
     { field: 'side', headerName: 'Side', width: 130 },
-    { field: 'amount', headerName: 'Traded with', width: 130, renderCell: (params) => {
+    {
+      field: 'amount', headerName: 'Traded with', width: 130, renderCell: (params) => {
         return <>{params.row.amount} {params.row.amountCurrency}</>
-    }, }
+      },
+    }
     // {
     //   field: 'fullName',
     //   headerName: 'Full name',
@@ -87,12 +89,34 @@ export const PastTransactionsPage: React.FC = () => {
         }}
       >
         {!signer && (
-          <Button variant="contained" onClick={web3Context.connectWallet}>
+          <Button
+            sx={{
+              backgroundColor: "#39429b",
+              '&:hover': {
+                backgroundColor: "#1976d2",
+              },
+            }}
+            variant="contained" onClick={web3Context.connectWallet}>
             Connect your wallet
           </Button>
         )}
         {signer && history && (
-        <DataGrid rows={history} columns={columns} />
+          <DataGrid
+            sx={{
+              borderRadius: "1rem",
+              backgroundColor: "#82a8d9",
+              '& .MuiDataGrid-columnHeaders': {
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                textAlign: 'center'
+              },
+            }}
+            rows={history}
+            columns={columns} />
         )}
       </Box>
     </AuthenticatedOnly>

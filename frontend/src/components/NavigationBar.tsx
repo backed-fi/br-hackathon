@@ -19,6 +19,7 @@ export const NavigationBar: React.FC = ({ ...props }) => {
       {...props}
       sx={({ zIndex }) => ({
         zIndex: zIndex.drawer + 1,
+        backgroundColor: "#39429b",
       })}
     >
       <Box

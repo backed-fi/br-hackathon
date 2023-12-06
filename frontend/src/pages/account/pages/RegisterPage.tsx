@@ -75,6 +75,12 @@ export const RegisterPage: React.FC = () => {
         loading={loading}
         variant="contained"
         onClick={form.handleSubmit(onRegister)}
+        sx={{
+          backgroundColor: "#39429b",
+          '&:hover': {
+            backgroundColor: "#1976d2",
+          },
+        }}
       >
         Register
       </LoadingButton>
